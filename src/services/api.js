@@ -8,11 +8,11 @@ export async function fetchAllContacts() {
     const { data } = await instance.get('');
     return data;
 }
-export async function postAddContact(contact) {
+export async function addContact(contact) {
     const { data } = await instance.post('', contact);
     return data;
 }
-export async function delContact(id) {
+export async function deleteContact(id) {
     const { data } = await instance.delete(`/${id}`);
     return data;
 }

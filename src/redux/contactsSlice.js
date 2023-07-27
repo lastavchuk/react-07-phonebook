@@ -1,45 +1,51 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchAll, addContact, deleteContact } from './operations';
+import {
+    addContactThunk,
+    deleteContactThunk,
+    getAllContactThunk,
+} from './operations';
 
 function handlePending(state) {
     state.isLoading = true;
     state.error = null;
 }
-function handleRejected(state, action) {
-    state.isLoading = false;
-    state.error = action.payload;
-}
-function handleRejectedDel(state, { error }) {
+function handleRejected(state, { error }) {
     state.isLoading = false;
     state.error = error.message;
 }
+// function handleRejected(state, action) {
+//     state.isLoading = false;
+//     state.error = action.payload;
+// }
 
 const contactsSlice = createSlice({
     name: 'contacts',
     initialState: { items: [], isLoading: false, error: null },
     extraReducers: builder => {
         builder
-            .addCase(fetchAll.pending, handlePending)
-            .addCase(fetchAll.rejected, handleRejected)
-            .addCase(addContact.pending, handlePending)
-            .addCase(addContact.rejected, handleRejected)
-            .addCase(deleteContact.pending, handlePending)
-            .addCase(deleteContact.rejected, handleRejectedDel)
-            .addCase(fetchAll.fulfilled, (state, action) => {
+            .addCase(getAllContactThunk.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.items = action.payload;
             })
-            .addCase(addContact.fulfilled, (state, action) => {
+            .addCase(addContactThunk.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.items.push(action.payload);
             })
-            .addCase(deleteContact.fulfilled, (state, action) => {
+            .addCase(deleteContactThunk.fulfilled, (state, action) => {
                 state.isLoading = false;
                 const index = state.items.findIndex(
                     contact => contact.id === action.payload.id
                 );
                 state.items.splice(index, 1);
-            });
+            })
+            .addMatcher(
+                action => action.type.endsWith('/pending'),
+                handlePending
+            )
+            .addMatcher(
+                action => action.type.endsWith('/rejected'),
+                handleRejected
+            );
     },
 });
 

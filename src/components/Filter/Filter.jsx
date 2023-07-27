@@ -8,7 +8,7 @@ export const Filter = ({ filter, onFilterChange }) => {
 
     return (
         <>
-            <span>Find contacts by name</span>
+            <span>Find contacts by name or phone number</span>
             <FieldInput
                 onChange={onInputChange}
                 value={filter}

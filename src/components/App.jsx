@@ -1,8 +1,10 @@
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { setFilter } from 'redux/filterSlice';
 import { selectContacts, selectFilter } from 'redux/selectors';
 
+import Loader from './Loader/Loader';
 import { Filter } from './Filter/Filter';
 import { Section } from './Section/Section';
 import { Container } from './Container/Container';
@@ -11,9 +13,11 @@ import { ContactList } from './Contacts/ContactList';
 import { FormAddContact } from './Forms/FormAddContact';
 
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import Loader from './Loader/Loader';
-import { addContact, deleteContact, fetchAll } from 'redux/operations';
-import { useEffect } from 'react';
+import {
+    addContactThunk,
+    deleteContactThunk,
+    getAllContactThunk,
+} from 'redux/operations';
 
 export function App() {
     const { items, isLoading, error } = useSelector(selectContacts);
@@ -22,7 +26,7 @@ export function App() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(fetchAll());
+        dispatch(getAllContactThunk());
     }, [dispatch]);
 
     const onAddContact = contactData => {
@@ -34,11 +38,11 @@ export function App() {
             });
             return;
         }
-        dispatch(addContact(contactData));
+        dispatch(addContactThunk(contactData));
     };
 
     const onRemoveContact = contactId => {
-        dispatch(deleteContact(contactId));
+        dispatch(deleteContactThunk(contactId));
     };
 
     const onFilter = filterTerm => {
